@@ -177,8 +177,7 @@ main {
   color: #c9d1d9; vertical-align: top;
 }
 #g-ct tr:last-child td { border-bottom: none; }
-#g-ct tr:nth-child(even) td { background: rgba(255,255,255,.022); }
-#g-ct tr:hover td { background: rgba(240,165,0,.04); }
+/* nth-child et hover supprimés : ils écrasaient les background-color inline Google Docs */
 
 mark { background: rgba(240,165,0,.28); color: var(--text); border-radius: 2px; padding: 0 1px; }
 mark.cur { background: var(--accent); color: #000; }
@@ -213,7 +212,6 @@ mark.cur { background: var(--accent); color: #000; }
 #g-ct p, #g-ct li, #g-ct div, #g-ct span {
   color: #c9d1d9 !important;
   font-family: 'Segoe UI', system-ui, sans-serif !important;
-  background: transparent !important;
 }
 /* Titres */
 #g-ct h1, #g-ct h1 * { color: #f0a500 !important; background: transparent !important; }
@@ -377,14 +375,33 @@ mark.cur { background: var(--accent); color: #000; }
         }
 
         // ── ETAPE 9 : Supprimer textes parasites Google Docs restants ──
+        // L'icone "i" + "Publie a l aide de Google Docs" est dans un <p> apres le h1
         var NOISE = ['published using google docs','report abuse','learn more',
-                     'publie', 'signaler un abus','en savoir plus'];
+                     'signaler un abus','en savoir plus'];
         body.querySelectorAll('p, div, span, a').forEach(function(el) {
           var t = el.textContent.trim().toLowerCase();
+          // Supprimer si texte de bruit exact
           if (NOISE.some(function(n) { return t === n; }) ||
               t.indexOf('updated automatically') === 0 ||
-              t.indexOf('mise à jour automatique') === 0 ||
+              t.indexOf('mise') === 0 ||
               /^onglet\s+\d+$/i.test(t)) {
+            el.remove();
+            return;
+          }
+          // Supprimer tout p/div qui contient une img ET du texte court (header Google Docs)
+          if ((el.tagName === 'P' || el.tagName === 'DIV') &&
+              el.querySelector('img') && t.length < 120) {
+            el.remove();
+          }
+        });
+        // Supprimer aussi les <p> qui ne contiennent que des liens "signaler/learn more"
+        body.querySelectorAll('p').forEach(function(el) {
+          var links = el.querySelectorAll('a');
+          var textOnly = el.textContent.trim().toLowerCase();
+          if (links.length > 0 && textOnly.length < 80 &&
+              (textOnly.indexOf('signaler') !== -1 || textOnly.indexOf('abuse') !== -1 ||
+               textOnly.indexOf('learn more') !== -1 || textOnly.indexOf('en savoir') !== -1 ||
+               textOnly.indexOf('publi') !== -1)) {
             el.remove();
           }
         });
@@ -395,6 +412,7 @@ mark.cur { background: var(--accent); color: #000; }
         });
 
         var ct = document.getElementById('g-ct');
+        if (!ct) { return; }  // securite si appele hors contexte
         ct.innerHTML = body.innerHTML;
         x4proc(ct);
         x4buildtoc(ct);
