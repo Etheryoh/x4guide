@@ -86,12 +86,12 @@ mark.cur{background:var(--accent);color:#000}
 <body>
 
 <header id="hd">
-  <button id="hd-tog" onclick="x4sb()">☰</button>
+  <button id="hd-tog">☰</button>
   <div id="hd-title">⚡ X4 Foundations — Guide Ultime <span>v8.0 Diplomacy · Yoh</span></div>
   <div id="hd-ri">Chargement…</div>
-  <input type="text" id="g-search" placeholder="Rechercher…" oninput="x4search(this.value)" onkeydown="x4snav(event)"/>
-  <button class="nb" id="g-bp" onclick="x4nav(-1)">↑</button>
-  <button class="nb" id="g-bn" onclick="x4nav(1)">↓</button>
+  <input type="text" id="g-search" placeholder="Rechercher…"/>
+  <button class="nb" id="g-bp">↑</button>
+  <button class="nb" id="g-bn">↓</button>
   <span id="g-sc"></span>
 </header>
 
@@ -106,13 +106,13 @@ mark.cur{background:var(--accent);color:#000}
   </main>
 </div>
 
-<button id="g-bt" onclick="x4top()">↑</button>
+<button id="g-bt">↑</button>
 
 <script>
 (function() {
   /* ── GARDE : ne pas s'executer si hors contexte guide (ex: Odoo parent) ── */
   if (!document.getElementById('g-ct')) {
-    window.x4search = window.x4snav = window.x4nav = window.x4top = window.x4load = window.x4sb = function(){};
+    /* Hors contexte guide : ne rien faire */
     return;
   }
 
@@ -215,7 +215,7 @@ mark.cur{background:var(--accent);color:#000}
   }
 
   /* ── CHARGEMENT ── */
-  window.x4load = function() {
+  var x4load = function() {
     var ct = document.getElementById('g-ct');
     var ld = document.getElementById('g-ld');
     if (!ct || !ld) return;
@@ -309,7 +309,7 @@ mark.cur{background:var(--accent);color:#000}
   }
 
   /* ── RECHERCHE ── */
-  window.x4search = function(q) {
+  var x4search = function(q) {
     var ct = document.getElementById('g-ct');
     if (!ct) return;
     ct.innerHTML = orig;
@@ -343,7 +343,7 @@ mark.cur{background:var(--accent);color:#000}
     if (sc) sc.textContent = ml.length ? '1/'+ml.length : '0';
   };
 
-  window.x4nav = function(dir) {
+  var x4nav = function(dir) {
     if (!ml.length) return;
     ml[mi].className = '';
     mi = (mi + dir + ml.length) % ml.length;
@@ -353,7 +353,7 @@ mark.cur{background:var(--accent);color:#000}
     if (sc) sc.textContent = (mi+1)+'/'+ml.length;
   };
 
-  window.x4snav = function(e) {
+  var x4snav = function(e) {
     if (e.key === 'Enter') { x4nav(e.shiftKey ? -1 : 1); }
     if (e.key === 'Escape') {
       var gs = document.getElementById('g-search');
@@ -367,12 +367,12 @@ mark.cur{background:var(--accent);color:#000}
     if (ms && el) ms.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
   }
 
-  window.x4top = function() {
+  var x4top = function() {
     var ms = document.getElementById('ms');
     if (ms) ms.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  window.x4sb = function() {
+  var x4sb = function() {
     var sb = document.getElementById('sb');
     if (!sb) return;
     sbOpen = !sbOpen;
@@ -384,6 +384,16 @@ mark.cur{background:var(--accent);color:#000}
     var gs = document.getElementById('g-search');
     if (gs && !gs.value.trim()) x4load();
   }, 300000);
+
+  /* ── ATTACHER LES ÉVÉNEMENTS (pas de handlers inline → pas d'erreurs Odoo) ── */
+  document.getElementById('g-search').addEventListener('input', function(){ x4search(this.value); });
+  document.getElementById('g-search').addEventListener('keydown', x4snav);
+  document.getElementById('g-bp').addEventListener('click', function(){ x4nav(-1); });
+  document.getElementById('g-bn').addEventListener('click', function(){ x4nav(1); });
+  document.getElementById('g-bt').addEventListener('click', x4top);
+  document.getElementById('hd-tog').addEventListener('click', x4sb);
+  /* x4load exposé globalement uniquement pour le bouton "Réessayer" dans le message d'erreur */
+  window.x4load = x4load;
 
   /* ── LANCEMENT ── */
   x4load();
