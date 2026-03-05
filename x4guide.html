@@ -131,7 +131,7 @@ main {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-#g-ct { display: none; max-width: 1100px; margin: 0 auto; padding: 34px 42px 70px; }
+#g-ct { display: none; max-width: none; margin: 0; padding: 28px 36px 70px; }
 
 #g-ct h1 {
   font-size: 1.6rem; font-weight: 800; color: var(--accent);
@@ -282,13 +282,26 @@ mark.cur { background: var(--accent); color: #000; }
           }
         });
 
-        // Supprimer les titres d'onglets Google Docs (ex: "Onglet 1")
-        body.querySelectorAll('h1, h2, h3, h4').forEach(function(el) {
+        // Supprimer "Onglet 1" et bruit similaire dans tous les elements
+        body.querySelectorAll('p, div, h1, h2, h3, h4, span').forEach(function(el) {
           var t = el.textContent.trim();
-          if (/^onglet\s+\d+$/i.test(t) || /^sheet\s+\d+$/i.test(t)) {
+          if (/^onglet\s+\d+$/i.test(t) || /^sheet\s+\d+$/i.test(t) || /^tab\s+\d+$/i.test(t)) {
             el.remove();
           }
         });
+
+        // Supprimer tout le bloc intro Google Docs avant le premier vrai h1
+        var allH1 = body.querySelectorAll('h1');
+        if (allH1.length > 0) {
+          var firstH1 = allH1[0];
+          var toRemove = [];
+          var node = firstH1.previousSibling;
+          while (node) {
+            toRemove.push(node);
+            node = node.previousSibling;
+          }
+          toRemove.forEach(function(n) { if (n.parentNode) { n.parentNode.removeChild(n); } });
+        }
 
         // Supprimer tous les styles inline qui viennent de Google Docs
         body.querySelectorAll('[style]').forEach(function(el) {
