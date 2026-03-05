@@ -110,6 +110,7 @@ mark.cur{background:var(--accent);color:#000}
 
 <script>
 (function() {
+  function init() {
   /* ── GARDE : ne pas s'executer si hors contexte guide (ex: Odoo parent) ── */
   if (!document.getElementById('g-ct')) {
     /* Hors contexte guide : ne rien faire */
@@ -398,6 +399,13 @@ mark.cur{background:var(--accent);color:#000}
 
   /* ── LANCEMENT ── */
   x4load();
+  } // fin init()
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 </body>
