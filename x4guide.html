@@ -261,11 +261,11 @@ mark.cur { background: var(--accent); color: #000; }
     fetch(PROXY + encodeURIComponent(DOC))
       .then(function(r) {
         if (!r.ok) { throw new Error('HTTP ' + r.status); }
-        return r.json();
+        return r.text();
       })
       .then(function(data) {
         var parser = new DOMParser();
-        var gdoc = parser.parseFromString(data.contents, 'text/html');
+        var gdoc = parser.parseFromString(data, 'text/html');
         var body = gdoc.querySelector('body');
         if (!body) { throw new Error('Corps vide'); }
 
