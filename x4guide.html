@@ -286,7 +286,11 @@ mark.cur { background: var(--accent); color: #000; }
 <script>
 (function() {
   // Ne pas s'executer si les elements du guide sont absents (ex: contexte Odoo)
-  if (!document.getElementById('g-ct')) { return; }
+  if (!document.getElementById('g-ct')) {
+    // Definir des stubs vides pour eviter les erreurs Odoo
+    window.x4search = window.x4snav = window.x4nav = window.x4top = window.x4load = function() {};
+    return;
+  }
 
   var DOC = 'https://docs.google.com/document/d/e/2PACX-1vS0RCKFftmhFPhR4fDQg_mADCKelLpdVMIVJ7qVrgX9XtV55fYE3kKsLmE0vIvhOZ7qs5TMxntG42dv/pub';
   var PROXIES = [
@@ -322,128 +326,72 @@ mark.cur { background: var(--accent); color: #000; }
         var body = gdoc.querySelector('body');
         if (!body) { throw new Error('Corps vide'); }
 
-        // Supprimer les éléments de bruit Google Docs
-        body.querySelectorAll('a[href*="drive.google.com"], a[href*="support.google.com"]').forEach(function(el) {
-          var p = el.closest('p');
-          if (p) { p.remove(); }
-        });
-        body.querySelectorAll('p, div, span').forEach(function(el) {
-          var t = el.textContent.trim();
-          if (t === 'Published using Google Docs' || t === 'Report abuse' ||
-              t === 'Learn more' || t.indexOf('Updated automatically') === 0) {
-            el.remove();
-          }
-        });
+        // ── ETAPE 1 : Supprimer blocs <style> et <script> Google Docs ──
+        body.querySelectorAll('style, script').forEach(function(el) { el.remove(); });
 
-        // Supprimer "Onglet 1" et bruit similaire dans tous les elements
-        body.querySelectorAll('p, div, h1, h2, h3, h4, span').forEach(function(el) {
-          var t = el.textContent.trim();
-          if (/^onglet\s+\d+$/i.test(t) || /^sheet\s+\d+$/i.test(t) || /^tab\s+\d+$/i.test(t)) {
-            el.remove();
-          }
-        });
-
-        // Supprimer tout le bloc intro Google Docs avant le premier vrai h1
-        var allH1 = body.querySelectorAll('h1');
-        if (allH1.length > 0) {
-          var firstH1 = allH1[0];
-          var toRemove = [];
-          var node = firstH1.previousSibling;
-          while (node) {
-            toRemove.push(node);
-            node = node.previousSibling;
-          }
-          toRemove.forEach(function(n) { if (n.parentNode) { n.parentNode.removeChild(n); } });
-        }
-
-        // Supprimer tous les styles inline qui viennent de Google Docs
-        body.querySelectorAll('[style]').forEach(function(el) {
-          el.removeAttribute('style');
-        });
-
-        // Supprimer les spans inutiles (Google Docs en génère des tonnes)
-        body.querySelectorAll('span').forEach(function(el) {
-          if (!el.querySelector('a') && el.children.length === 0) {
-            var txt = document.createTextNode(el.textContent);
-            el.parentNode.replaceChild(txt, el);
-          }
-        });
-
-        // Supprimer les éléments vides
-        body.querySelectorAll('p, div, h1, h2, h3, h4').forEach(function(el) {
-          if (el.textContent.trim() === '') { el.remove(); }
-        });
-
-        // Supprimer les blocs <style> injectes par Google Docs
-        body.querySelectorAll('style').forEach(function(el) { el.remove(); });
-
-        // Supprimer TOUT le bloc header Google Docs
-        // (icone, "Publie a l aide de Google Docs", "Signaler un abus", titre repete, "Mise a jour...")
-        // Strategie : supprimer tout ce qui precede le premier vrai H1 du contenu
-        var allElems = Array.from(body.children);
-        var foundContent = false;
-        allElems.forEach(function(el) {
-          if (!foundContent) {
-            // Le premier h1 ou la premiere table = debut du vrai contenu
-            if (el.tagName === 'H1' || el.tagName === 'TABLE') {
-              foundContent = true;
-            } else {
-              el.remove();
-            }
-          }
-        });
-        // Supprimer aussi les elements restants avec texte de bruit
-        body.querySelectorAll('*').forEach(function(el) {
-          var t = el.textContent.trim();
-          if (t === 'Publie a l aide de Google Docs' ||
-              t === 'Published using Google Docs' ||
-              t === 'Signaler un abus' || t === 'Report abuse' ||
-              t === 'En savoir plus' || t === 'Learn more' ||
-              t.indexOf('Mise a jour automatique') === 0 ||
-              t.indexOf('Updated automatically') === 0) {
-            el.remove();
-          }
-        });
-
-        // Supprimer toutes les images (icones Google Docs)
+        // ── ETAPE 2 : Supprimer toutes les images (icones Google Docs) ──
         body.querySelectorAll('img').forEach(function(el) { el.remove(); });
 
-        // Supprimer styles inline sur texte (p, div, span, titres, li)
-        // mais PAS sur td/th pour garder les couleurs de cellules
-        body.querySelectorAll('p, span, h1, h2, h3, h4, li, ul, ol').forEach(function(el) {
-          el.removeAttribute('style');
-          el.removeAttribute('class');
-        });
-        // Pour les div : supprimer style mais garder le contenu
-        body.querySelectorAll('div').forEach(function(el) {
-          el.removeAttribute('style');
-          el.removeAttribute('class');
-        });
-
-        // Sur les td/th : garder UNIQUEMENT background-color, supprimer le reste
+        // ── ETAPE 3 : Extraire background-color des td/th AVANT tout autre nettoyage ──
+        // Google Docs met les couleurs dans style="background-color:#rrggbb"
         body.querySelectorAll('td, th').forEach(function(el) {
           var style = el.getAttribute('style') || '';
-          var bgMatch = style.match(/background-color\s*:\s*[^;]+/);
-          if (bgMatch) {
-            el.setAttribute('style', bgMatch[0]);
-          } else {
-            el.removeAttribute('style');
-          }
-          el.removeAttribute('class');
-        });
-        // Nettoyer aussi les tr
-        body.querySelectorAll('tr, table, tbody, thead').forEach(function(el) {
-          el.removeAttribute('style');
-          el.removeAttribute('class');
+          var m = style.match(/background-color\s*:\s*([^;]+)/);
+          // Stocker dans data-bg pour le remettre apres nettoyage
+          if (m) { el.setAttribute('data-bg', m[1].trim()); }
         });
 
-        // Supprimer attributs obsoletes
-        body.querySelectorAll('[color], [bgcolor], [align], [width], [height]').forEach(function(el) {
-          el.removeAttribute('color');
-          el.removeAttribute('bgcolor');
-          el.removeAttribute('align');
-          el.removeAttribute('width');
-          el.removeAttribute('height');
+        // ── ETAPE 4 : Supprimer TOUS les styles inline et classes (clean slate) ──
+        body.querySelectorAll('[style]').forEach(function(el) { el.removeAttribute('style'); });
+        body.querySelectorAll('[class]').forEach(function(el) { el.removeAttribute('class'); });
+
+        // ── ETAPE 5 : Remettre background-color sur td/th depuis data-bg ──
+        body.querySelectorAll('[data-bg]').forEach(function(el) {
+          el.style.backgroundColor = el.getAttribute('data-bg');
+          el.removeAttribute('data-bg');
+        });
+
+        // ── ETAPE 6 : Supprimer attributs obsoletes ──
+        body.querySelectorAll('[color],[bgcolor],[align],[width],[height],[border],[cellpadding],[cellspacing]').forEach(function(el) {
+          ['color','bgcolor','align','width','height','border','cellpadding','cellspacing'].forEach(function(a) {
+            el.removeAttribute(a);
+          });
+        });
+
+        // ── ETAPE 7 : Aplatir les spans inutiles (Google Docs en genere des centaines) ──
+        body.querySelectorAll('span').forEach(function(el) {
+          if (!el.querySelector('a') && el.children.length === 0) {
+            el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
+          }
+        });
+
+        // ── ETAPE 8 : Supprimer le header Google Docs (tout avant le 1er H1) ──
+        var firstH1 = body.querySelector('h1');
+        if (firstH1) {
+          var node = firstH1.previousSibling;
+          while (node) {
+            var prev = node.previousSibling;
+            node.parentNode.removeChild(node);
+            node = prev;
+          }
+        }
+
+        // ── ETAPE 9 : Supprimer textes parasites Google Docs restants ──
+        var NOISE = ['published using google docs','report abuse','learn more',
+                     'publie', 'signaler un abus','en savoir plus'];
+        body.querySelectorAll('p, div, span, a').forEach(function(el) {
+          var t = el.textContent.trim().toLowerCase();
+          if (NOISE.some(function(n) { return t === n; }) ||
+              t.indexOf('updated automatically') === 0 ||
+              t.indexOf('mise à jour automatique') === 0 ||
+              /^onglet\s+\d+$/i.test(t)) {
+            el.remove();
+          }
+        });
+
+        // ── ETAPE 10 : Supprimer elements vides ──
+        body.querySelectorAll('p, h1, h2, h3, h4').forEach(function(el) {
+          if (el.textContent.trim() === '') { el.remove(); }
         });
 
         var ct = document.getElementById('g-ct');
@@ -540,6 +488,7 @@ mark.cur { background: var(--accent); color: #000; }
 
   window.x4search = function(q) {
     var ct = document.getElementById('g-ct');
+    if (!ct) { return; }
     ct.innerHTML = orig;
     x4proc(ct);
     ml = []; mi = 0;
@@ -600,7 +549,8 @@ mark.cur { background: var(--accent); color: #000; }
   window.x4snav = function(e) {
     if (e.key === 'Enter') { x4nav(e.shiftKey ? -1 : 1); }
     if (e.key === 'Escape') {
-      document.getElementById('g-search').value = '';
+      var _s = document.getElementById('g-search');
+      if (_s) { _s.value = ''; }
       x4search('');
     }
   };
