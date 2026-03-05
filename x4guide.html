@@ -377,36 +377,73 @@ mark.cur { background: var(--accent); color: #000; }
         // Supprimer les blocs <style> injectes par Google Docs
         body.querySelectorAll('style').forEach(function(el) { el.remove(); });
 
-        // Supprimer les images parasites Google Docs (icones, logos)
-        body.querySelectorAll('img').forEach(function(el) {
-          var src = el.getAttribute('src') || '';
-          var alt = el.getAttribute('alt') || '';
-          if (src.indexOf('google') !== -1 || src.indexOf('gstatic') !== -1 ||
-              src.indexOf('data:image/png;base64,iVBOR') === 0 ||
-              (alt === '' && src.indexOf('http') !== -1)) {
+        // Supprimer TOUT le bloc header Google Docs
+        // (icone, "Publie a l aide de Google Docs", "Signaler un abus", titre repete, "Mise a jour...")
+        // Strategie : supprimer tout ce qui precede le premier vrai H1 du contenu
+        var allElems = Array.from(body.children);
+        var foundContent = false;
+        allElems.forEach(function(el) {
+          if (!foundContent) {
+            // Le premier h1 ou la premiere table = debut du vrai contenu
+            if (el.tagName === 'H1' || el.tagName === 'TABLE') {
+              foundContent = true;
+            } else {
+              el.remove();
+            }
+          }
+        });
+        // Supprimer aussi les elements restants avec texte de bruit
+        body.querySelectorAll('*').forEach(function(el) {
+          var t = el.textContent.trim();
+          if (t === 'Publie a l aide de Google Docs' ||
+              t === 'Published using Google Docs' ||
+              t === 'Signaler un abus' || t === 'Report abuse' ||
+              t === 'En savoir plus' || t === 'Learn more' ||
+              t.indexOf('Mise a jour automatique') === 0 ||
+              t.indexOf('Updated automatically') === 0) {
             el.remove();
           }
         });
 
-        // Supprimer les styles inline sur p, div, span (texte) mais PAS sur td/th (tableaux)
-        body.querySelectorAll('p, div, span, h1, h2, h3, h4, li').forEach(function(el) {
+        // Supprimer toutes les images (icones Google Docs)
+        body.querySelectorAll('img').forEach(function(el) { el.remove(); });
+
+        // Supprimer styles inline sur texte (p, div, span, titres, li)
+        // mais PAS sur td/th pour garder les couleurs de cellules
+        body.querySelectorAll('p, span, h1, h2, h3, h4, li, ul, ol').forEach(function(el) {
+          el.removeAttribute('style');
+          el.removeAttribute('class');
+        });
+        // Pour les div : supprimer style mais garder le contenu
+        body.querySelectorAll('div').forEach(function(el) {
           el.removeAttribute('style');
           el.removeAttribute('class');
         });
 
-        // Supprimer les attributs de mise en forme obsoletes
-        body.querySelectorAll('[color], [bgcolor], [align]').forEach(function(el) {
+        // Sur les td/th : garder UNIQUEMENT background-color, supprimer le reste
+        body.querySelectorAll('td, th').forEach(function(el) {
+          var style = el.getAttribute('style') || '';
+          var bgMatch = style.match(/background-color\s*:\s*[^;]+/);
+          if (bgMatch) {
+            el.setAttribute('style', bgMatch[0]);
+          } else {
+            el.removeAttribute('style');
+          }
+          el.removeAttribute('class');
+        });
+        // Nettoyer aussi les tr
+        body.querySelectorAll('tr, table, tbody, thead').forEach(function(el) {
+          el.removeAttribute('style');
+          el.removeAttribute('class');
+        });
+
+        // Supprimer attributs obsoletes
+        body.querySelectorAll('[color], [bgcolor], [align], [width], [height]').forEach(function(el) {
           el.removeAttribute('color');
           el.removeAttribute('bgcolor');
           el.removeAttribute('align');
-        });
-
-        // Supprimer les conteneurs de "page" Google Docs (div avec padding enorme)
-        body.querySelectorAll('div').forEach(function(el) {
-          var style = el.getAttribute('style') || '';
-          if (style.indexOf('margin') !== -1 && style.indexOf('padding') !== -1) {
-            el.removeAttribute('style');
-          }
+          el.removeAttribute('width');
+          el.removeAttribute('height');
         });
 
         var ct = document.getElementById('g-ct');
