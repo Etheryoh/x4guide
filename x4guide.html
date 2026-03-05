@@ -253,19 +253,40 @@ mark.cur { background: var(--accent); color: #000; }
 
 <script>
 (function() {
+  // Ne pas s'executer si les elements du guide sont absents (ex: contexte Odoo)
+  if (!document.getElementById('g-ct')) { return; }
+
   var DOC = 'https://docs.google.com/document/d/e/2PACX-1vS0RCKFftmhFPhR4fDQg_mADCKelLpdVMIVJ7qVrgX9XtV55fYE3kKsLmE0vIvhOZ7qs5TMxntG42dv/pub';
-  var PROXY = 'https://api.allorigins.win/get?url=';
+  var PROXIES = [
+    { url: 'https://corsproxy.io/?url=', type: 'text' },
+    { url: 'https://api.allorigins.win/get?url=', type: 'json' },
+    { url: 'https://api.codetabs.com/v1/proxy?quest=', type: 'text' }
+  ];
   var sbOpen = true, ml = [], mi = 0, orig = '', heads = [], aid = '';
 
-  window.x4load = function() {
-    fetch(PROXY + encodeURIComponent(DOC))
+  function tryProxy(index) {
+    if (index >= PROXIES.length) {
+      throw new Error('Tous les proxies ont echoue');
+    }
+    var proxy = PROXIES[index];
+    return fetch(proxy.url + encodeURIComponent(DOC))
       .then(function(r) {
         if (!r.ok) { throw new Error('HTTP ' + r.status); }
-        return r.json();
+        return proxy.type === 'json' ? r.json() : r.text();
       })
       .then(function(data) {
+        return proxy.type === 'json' ? data.contents : data;
+      })
+      .catch(function() {
+        return tryProxy(index + 1);
+      });
+  }
+
+  window.x4load = function() {
+    tryProxy(0)
+      .then(function(html) {
         var parser = new DOMParser();
-        var gdoc = parser.parseFromString(data.contents, 'text/html');
+        var gdoc = parser.parseFromString(html, 'text/html');
         var body = gdoc.querySelector('body');
         if (!body) { throw new Error('Corps vide'); }
 
