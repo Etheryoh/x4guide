@@ -1,280 +1,107 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>X4 Foundations — Guide Ultime</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚡ X4 Foundations — Guide Ultime</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; background: #0d1117; }
-
 :root {
   --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
   --accent:#f0a500; --accent2:#e8751a;
   --text:#e6edf3; --muted:#8b949e; --border:#30363d;
   --sw:280px; --hh:52px;
 }
-
-body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  color: var(--text);
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
 /* HEADER */
-.hdr {
-  height: var(--hh);
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
-  gap: 10px;
-  flex-shrink: 0;
-  z-index: 10;
-}
-.hdr h1 {
-  font-size: .9rem;
-  font-weight: 700;
-  color: var(--accent);
-  white-space: nowrap;
-}
-.sub { font-size: .68rem; color: var(--muted); white-space: nowrap; }
-.tbtn {
-  background: none; border: none; color: var(--muted);
-  cursor: pointer; padding: 4px; display: flex; align-items: center; flex-shrink: 0;
-}
-.tbtn:hover { color: var(--text); }
-
-.sw { margin-left: auto; position: relative; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-.si { position: absolute; left: 8px; opacity: .4; pointer-events: none; }
-#g-search {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
-  color: var(--text); padding: 5px 9px 5px 28px; font-size: .8rem;
-  width: 195px; outline: none; font-family: inherit;
-}
-#g-search:focus { border-color: var(--accent); }
-#g-search::placeholder { color: var(--muted); }
-#g-sc { font-size: .68rem; color: var(--muted); white-space: nowrap; min-width: 50px; }
-.nb {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 4px;
-  color: var(--text); padding: 3px 6px; cursor: pointer; font-size: .75rem; display: none;
-}
-.nb:hover { border-color: var(--accent); }
-#g-ri { font-size: .65rem; color: var(--muted); }
+#hd{height:var(--hh);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:10}
+#hd-tog{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.15rem;padding:4px 6px;border-radius:4px}
+#hd-tog:hover{color:var(--text);background:var(--bg3)}
+#hd-title{font-weight:700;font-size:.95rem;color:var(--accent);white-space:nowrap}
+#hd-title span{color:var(--muted);font-weight:400;font-size:.78rem;margin-left:8px}
+#hd-ri{font-size:.72rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+#g-search{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;font-size:.82rem;width:200px;outline:none;margin-left:8px}
+#g-search:focus{border-color:var(--accent)}
+#g-search::placeholder{color:var(--muted)}
+.nb{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:4px;padding:2px 7px;font-size:.78rem}
+.nb:hover{color:var(--text);border-color:var(--accent)}
+#g-sc{font-size:.72rem;color:var(--muted);min-width:40px;text-align:center}
 
 /* LAYOUT */
-.lay {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
-}
+#lay{display:flex;flex:1;overflow:hidden}
 
 /* SIDEBAR */
-aside {
-  width: var(--sw);
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: width .22s ease, opacity .22s ease;
-}
-aside.col { width: 0; opacity: 0; }
-
-.sh {
-  padding: 10px 14px 7px;
-  font-size: .65rem; font-weight: 700; letter-spacing: 1.1px;
-  color: var(--muted); text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-#g-toc {
-  flex: 1;
-  overflow-y: auto;
-  padding: 4px 0 20px;
-}
-
-.ti {
-  display: block; padding: 4px 14px; font-size: .78rem; color: var(--muted);
-  text-decoration: none; cursor: pointer; border-left: 2px solid transparent;
-  line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  transition: color .1s, background .1s, border-color .1s;
-}
-.ti:hover { color: var(--text); background: var(--bg3); }
-.ti.act { color: var(--accent); border-left-color: var(--accent); background: rgba(240,165,0,.07); }
-.ti.h1 { font-weight: 700; font-size: .81rem; color: #c9d1d9; padding-top: 8px; }
-.ti.h2 { padding-left: 26px; }
-.ti.h3 { padding-left: 40px; font-size: .73rem; }
+#sb{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .2s;overflow:hidden}
+#sb.closed{width:0}
+#sb-hd{padding:10px 14px 6px;font-size:.65rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);flex-shrink:0}
+#g-toc{flex:1;overflow-y:auto;padding:6px 0 20px}
+#g-toc a{display:block;padding:4px 14px;font-size:.78rem;color:var(--muted);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:2px solid transparent;line-height:1.4}
+#g-toc a:hover{color:var(--text);background:var(--bg3)}
+#g-toc a.act{color:var(--accent);border-left-color:var(--accent);background:rgba(240,165,0,.07)}
+#g-toc a.ti{font-weight:700;color:var(--text);font-size:.8rem;margin-top:8px}
+#g-toc a.ti.act{color:var(--accent)}
+#g-toc a.h3{padding-left:24px;font-size:.74rem}
+#g-toc a.h4{padding-left:34px;font-size:.71rem}
 
 /* MAIN */
-main {
-  flex: 1;
-  overflow-y: auto;
-  min-width: 0;
-  background: var(--bg);
-}
+#ms{flex:1;overflow-y:auto;position:relative}
+#g-ld{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.88rem}
+#g-ct{display:none;width:100%;padding:28px 40px 80px}
 
-#g-ld {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 100%; gap: 12px; color: var(--muted);
-}
-.sp {
-  width: 32px; height: 32px; border: 3px solid var(--border);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* CONTENU GUIDE */
+#g-ct h1{color:var(--accent);font-size:1.55rem;font-weight:800;margin:2rem 0 .7rem;padding-bottom:.4rem;border-bottom:2px solid var(--accent);text-transform:uppercase;letter-spacing:.02em}
+#g-ct h1:first-child{margin-top:0}
+#g-ct h2{color:var(--text);font-size:1.1rem;font-weight:700;margin:1.6rem 0 .5rem;padding-left:10px;border-left:3px solid var(--accent2)}
+#g-ct h3{color:var(--accent2);font-size:.95rem;font-weight:600;margin:1.2rem 0 .4rem}
+#g-ct h4{color:var(--text);font-size:.88rem;font-weight:600;margin:1rem 0 .3rem}
+#g-ct p{line-height:1.75;margin-bottom:.7rem;color:#c9d1d9;font-size:.9rem}
+#g-ct ul,#g-ct ol{margin:.4rem 0 .7rem 1.3rem;color:#c9d1d9;font-size:.9rem}
+#g-ct li{margin-bottom:.25rem;line-height:1.6}
+#g-ct strong,#g-ct b{color:var(--text)}
+#g-ct a{color:var(--accent);text-decoration:none}
+#g-ct a:hover{text-decoration:underline}
+#g-ct hr{border:none;border-top:1px solid var(--border);margin:1.7rem 0}
+#g-ct table{width:100%;border-collapse:collapse;margin:.8rem 0 1.3rem;font-size:.82rem}
+#g-ct th{background:var(--bg3);color:var(--accent);padding:7px 10px;text-align:left;font-weight:700;border:1px solid var(--border)}
+#g-ct td{padding:6px 10px;border:1px solid var(--border);color:#c9d1d9;vertical-align:top}
+/* PAS de nth-child ni hover - pour ne pas ecraser les couleurs inline Google Docs */
 
-#g-ct { display: none; width: 100%; padding: 28px 36px 70px; }
+mark{background:rgba(240,165,0,.28);color:var(--text);border-radius:2px;padding:0 1px}
+mark.cur{background:var(--accent);color:#000}
 
-#g-ct h1 {
-  font-size: 1.6rem; font-weight: 800; color: var(--accent);
-  margin: 1.9rem 0 .7rem; padding: 0 0 .4rem;
-  border-bottom: 2px solid var(--border);
-  line-height: 1.2;
-}
-#g-ct h1:first-child { margin-top: 0; }
-#g-ct h2 {
-  font-size: 1.18rem; font-weight: 700; color: #c9d1d9;
-  margin: 1.8rem 0 .5rem; padding: 0 0 0 10px;
-  border-left: 3px solid var(--accent);
-  line-height: 1.3;
-}
-#g-ct h3 {
-  font-size: 1rem; font-weight: 600; color: var(--accent2);
-  margin: 1.3rem 0 .4rem;
-}
-#g-ct h4 {
-  font-size: .92rem; font-weight: 600; color: #c9d1d9;
-  margin: 1.1rem 0 .35rem;
-}
-#g-ct p { line-height: 1.75; margin-bottom: .7rem; color: #c9d1d9; font-size: .9rem; }
-#g-ct ul, #g-ct ol { margin: .4rem 0 .7rem 1.3rem; color: #c9d1d9; font-size: .9rem; }
-#g-ct li { margin-bottom: .25rem; line-height: 1.6; }
-#g-ct strong { color: var(--text); }
-#g-ct a { color: var(--accent); text-decoration: none; }
-#g-ct a:hover { text-decoration: underline; }
-#g-ct hr { border: none; border-top: 1px solid var(--border); margin: 1.7rem 0; }
+/* BACK TO TOP */
+#g-bt{position:fixed;bottom:22px;right:22px;background:var(--accent);color:#000;border:none;border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;font-weight:700;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#g-bt:hover{background:var(--accent2)}
 
-#g-ct table {
-  width: 100%; border-collapse: collapse;
-  margin: .8rem 0 1.3rem; font-size: .82rem;
-  border-radius: 6px; overflow: hidden;
-}
-#g-ct th {
-  background: var(--bg3); color: var(--accent);
-  padding: 7px 10px; text-align: left;
-  font-weight: 700; border-bottom: 2px solid var(--accent);
-}
-#g-ct td {
-  padding: 6px 10px; border-bottom: 1px solid var(--border);
-  color: #c9d1d9; vertical-align: top;
-}
-#g-ct tr:last-child td { border-bottom: none; }
-/* nth-child et hover supprimés : ils écrasaient les background-color inline Google Docs */
-
-mark { background: rgba(240,165,0,.28); color: var(--text); border-radius: 2px; padding: 0 1px; }
-mark.cur { background: var(--accent); color: #000; }
-
-#g-toc::-webkit-scrollbar, main::-webkit-scrollbar { width: 5px; }
-#g-toc::-webkit-scrollbar-track, main::-webkit-scrollbar-track { background: transparent; }
-#g-toc::-webkit-scrollbar-thumb, main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-#g-bt {
-  position: fixed; bottom: 18px; right: 18px;
-  background: var(--accent); color: #000; border: none; border-radius: 50%;
-  width: 34px; height: 34px; font-size: 1rem; cursor: pointer;
-  display: none; align-items: center; justify-content: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,.5); z-index: 50; font-weight: 700;
-}
-#g-bt.vis { display: flex; }
-
-@media (max-width: 700px) {
-  aside {
-    position: fixed; top: var(--hh); left: 0;
-    height: calc(100% - var(--hh)); z-index: 20;
-    transition: transform .22s ease, opacity .22s ease;
-  }
-  aside.col { transform: translateX(-100%); width: var(--sw); opacity: 1; }
-  #g-ct { padding: 18px 14px 50px; }
-  #g-search { width: 130px; }
-  .sub, #g-ri { display: none; }
-}
-
-/* FORCER NOS COULEURS SUR TOUT LE CONTENU GOOGLE DOCS */
-/* Texte et fonts - sur tous les elements sauf tableaux */
-#g-ct p, #g-ct li, #g-ct div, #g-ct span {
-  color: #c9d1d9 !important;
-  font-family: 'Segoe UI', system-ui, sans-serif !important;
-}
-/* Titres */
-#g-ct h1, #g-ct h1 * { color: #f0a500 !important; background: transparent !important; }
-#g-ct h2, #g-ct h2 * { color: #c9d1d9 !important; background: transparent !important; }
-#g-ct h3, #g-ct h3 * { color: #e8751a !important; background: transparent !important; }
-#g-ct h4, #g-ct h4 * { color: #c9d1d9 !important; background: transparent !important; }
-#g-ct a { color: #f0a500 !important; }
-#g-ct strong, #g-ct b { color: #e6edf3 !important; }
-/* Tableaux - garder les couleurs de cellules Google Docs mais adapter le texte */
-#g-ct table { width: 100% !important; border-collapse: collapse !important; font-size: .85rem !important; }
-#g-ct td, #g-ct th { border: 1px solid #30363d !important; padding: 6px 10px !important; }
-#g-ct td { color: #c9d1d9 !important; }
-#g-ct th { color: #f0a500 !important; font-weight: 700 !important; }
-/* Supprimer les "pages" et conteneurs Google Docs */
-#g-ct .doc-content, #g-ct [class*="kix"], #g-ct [id*="docs-internal"] {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-}
-/* Supprimer les images/icones parasites Google Docs (le grand i) */
-#g-ct img[src*="google"], #g-ct img[alt=""], #g-ct img:not([src]) {
-  display: none !important;
+@media(max-width:700px){
+  #sb{position:absolute;z-index:20;height:calc(100vh - var(--hh));top:var(--hh)}
+  #sb.closed{width:0}
+  #g-ct{padding:18px 14px 50px}
+  #g-search{width:120px}
+  #hd-ri{display:none}
 }
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <button class="tbtn" onclick="x4tog()" title="Sommaire">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-  <h1>⚡ X4 Foundations — Guide Ultime</h1>
-  <span class="sub">v8.0 Diplomacy · Yoh</span>
-  <span id="g-ri"></span>
-  <div class="sw">
-    <svg class="si" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input type="text" id="g-search" placeholder="Rechercher…"
-           oninput="x4search(this.value)" onkeydown="x4snav(event)"/>
-    <span id="g-sc"></span>
-    <button class="nb" id="g-bp" onclick="x4nav(-1)">↑</button>
-    <button class="nb" id="g-bn" onclick="x4nav(1)">↓</button>
-  </div>
-</div>
+<header id="hd">
+  <button id="hd-tog" onclick="x4sb()">☰</button>
+  <div id="hd-title">⚡ X4 Foundations — Guide Ultime <span>v8.0 Diplomacy · Yoh</span></div>
+  <div id="hd-ri">Chargement…</div>
+  <input type="text" id="g-search" placeholder="Rechercher…" oninput="x4search(this.value)" onkeydown="x4snav(event)"/>
+  <button class="nb" id="g-bp" onclick="x4nav(-1)">↑</button>
+  <button class="nb" id="g-bn" onclick="x4nav(1)">↓</button>
+  <span id="g-sc"></span>
+</header>
 
-<div class="lay">
-  <aside id="g-sb">
-    <div class="sh">Sommaire</div>
-    <nav id="g-toc"></nav>
-  </aside>
-  <main id="g-ms">
-    <div id="g-ld">
-      <div class="sp"></div>
-      <span style="font-size:.85rem">Chargement depuis Google Docs…</span>
-    </div>
+<div id="lay">
+  <nav id="sb">
+    <div id="sb-hd">Sommaire</div>
+    <div id="g-toc"></div>
+  </nav>
+  <main id="ms">
+    <div id="g-ld">Chargement depuis Google Docs…</div>
     <div id="g-ct"></div>
   </main>
 </div>
@@ -283,10 +110,9 @@ mark.cur { background: var(--accent); color: #000; }
 
 <script>
 (function() {
-  // Ne pas s'executer si les elements du guide sont absents (ex: contexte Odoo)
+  /* ── GARDE : ne pas s'executer si hors contexte guide (ex: Odoo parent) ── */
   if (!document.getElementById('g-ct')) {
-    // Definir des stubs vides pour eviter les erreurs Odoo
-    window.x4search = window.x4snav = window.x4nav = window.x4top = window.x4load = function() {};
+    window.x4search = window.x4snav = window.x4nav = window.x4top = window.x4load = window.x4sb = function(){};
     return;
   }
 
@@ -296,298 +122,271 @@ mark.cur { background: var(--accent); color: #000; }
     { url: 'https://api.allorigins.win/get?url=', type: 'json' },
     { url: 'https://api.codetabs.com/v1/proxy?quest=', type: 'text' }
   ];
-  var sbOpen = true, ml = [], mi = 0, orig = '', heads = [], aid = '';
+  var sbOpen = true, ml = [], mi = 0, orig = '', spyTid = null;
 
-  function tryProxy(index) {
-    if (index >= PROXIES.length) {
-      throw new Error('Tous les proxies ont echoue');
-    }
-    var proxy = PROXIES[index];
-    return fetch(proxy.url + encodeURIComponent(DOC))
-      .then(function(r) {
-        if (!r.ok) { throw new Error('HTTP ' + r.status); }
-        return proxy.type === 'json' ? r.json() : r.text();
-      })
-      .then(function(data) {
-        return proxy.type === 'json' ? data.contents : data;
-      })
-      .catch(function() {
-        return tryProxy(index + 1);
-      });
+  /* ── PROXY CASCADE ── */
+  function tryProxy(i) {
+    if (i >= PROXIES.length) return Promise.reject(new Error('Tous les proxies ont échoué'));
+    var p = PROXIES[i];
+    return fetch(p.url + encodeURIComponent(DOC))
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return p.type==='json'?r.json():r.text(); })
+      .then(function(d){ return p.type==='json'?d.contents:d; })
+      .catch(function(){ return tryProxy(i+1); });
   }
 
+  /* ── NETTOYAGE HTML GOOGLE DOCS ── */
+  function cleanGdoc(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    var body = doc.body;
+    if (!body) throw new Error('Corps vide');
+
+    /* 1. Supprimer <style> et <script> Google Docs */
+    body.querySelectorAll('style,script').forEach(function(el){ el.remove(); });
+
+    /* 2. Extraire background-color des td/th AVANT tout nettoyage
+          Google Docs: <td style="background-color:#ea9999;..."> */
+    body.querySelectorAll('td,th').forEach(function(el) {
+      var s = el.getAttribute('style') || '';
+      var m = s.match(/background-color\s*:\s*([^;]+)/i);
+      if (m) el.setAttribute('data-bg', m[1].trim());
+    });
+
+    /* 3. Supprimer TOUS les styles inline et classes (clean slate) */
+    body.querySelectorAll('[style]').forEach(function(el){ el.removeAttribute('style'); });
+    body.querySelectorAll('[class]').forEach(function(el){ el.removeAttribute('class'); });
+
+    /* 4. Remettre background-color sur td/th depuis data-bg */
+    body.querySelectorAll('[data-bg]').forEach(function(el) {
+      el.style.backgroundColor = el.getAttribute('data-bg');
+      el.removeAttribute('data-bg');
+    });
+
+    /* 5. Supprimer attributs HTML obsoletes */
+    ['color','bgcolor','align','width','height','border','cellpadding','cellspacing','valign'].forEach(function(attr){
+      body.querySelectorAll('['+attr+']').forEach(function(el){ el.removeAttribute(attr); });
+    });
+
+    /* 6. Aplatir les spans sans enfants (Google Docs en génère des centaines) */
+    body.querySelectorAll('span').forEach(function(el) {
+      if (el.children.length === 0 && !el.querySelector('a')) {
+        el.parentNode.replaceChild(doc.createTextNode(el.textContent), el);
+      }
+    });
+
+    /* 7. Supprimer les images (icones Google Docs) */
+    body.querySelectorAll('img').forEach(function(el){ el.remove(); });
+
+    /* 8. Supprimer tout ce qui précède le premier H1 du contenu
+          (header Google Docs : icone, "Publié à l'aide de...", etc.) */
+    var firstH1 = body.querySelector('h1');
+    if (firstH1) {
+      /* Remonter jusqu'au parent direct du body */
+      var topEl = firstH1;
+      while (topEl.parentElement && topEl.parentElement !== body) topEl = topEl.parentElement;
+      /* Supprimer tous les noeuds AVANT ce conteneur */
+      var node = topEl.previousSibling;
+      while (node) { var prev = node.previousSibling; body.removeChild(node); node = prev; }
+    }
+
+    /* 9. Supprimer les p/div avec textes parasites Google Docs */
+    var NOISE = [
+      'published using google docs', 'report abuse', 'learn more',
+      'signaler un abus', 'en savoir plus',
+      'publi\u00e9 \u00e0 l\u2019aide de google docs',
+      'publi\u00e9 \u00e0 l\'aide de google docs'
+    ];
+    body.querySelectorAll('p,div,a,span').forEach(function(el) {
+      var t = el.textContent.trim().toLowerCase();
+      if (NOISE.some(function(n){ return t.indexOf(n) !== -1; }) ||
+          /^onglet\s*\d*$/i.test(t) ||
+          /^tab\s*\d*$/i.test(t) ||
+          /updated automatically/i.test(t) ||
+          /mise \u00e0 jour automatique/i.test(t)) {
+        el.remove();
+      }
+    });
+
+    /* 10. Supprimer éléments vides restants */
+    body.querySelectorAll('p,h1,h2,h3,h4,div').forEach(function(el){
+      if (!el.querySelector('table,ul,ol,img') && el.textContent.trim()==='') el.remove();
+    });
+
+    return body.innerHTML;
+  }
+
+  /* ── CHARGEMENT ── */
   window.x4load = function() {
+    var ct = document.getElementById('g-ct');
+    var ld = document.getElementById('g-ld');
+    if (!ct || !ld) return;
+    ld.textContent = 'Chargement depuis Google Docs…';
+    ld.style.display = 'flex';
+    ct.style.display = 'none';
     tryProxy(0)
       .then(function(html) {
-        var parser = new DOMParser();
-        var gdoc = parser.parseFromString(html, 'text/html');
-        var body = gdoc.querySelector('body');
-        if (!body) { throw new Error('Corps vide'); }
-
-        // ── ETAPE 1 : Supprimer blocs <style> et <script> Google Docs ──
-        body.querySelectorAll('style, script').forEach(function(el) { el.remove(); });
-
-        // ── ETAPE 2 : Supprimer toutes les images (icones Google Docs) ──
-        body.querySelectorAll('img').forEach(function(el) { el.remove(); });
-
-        // ── ETAPE 3 : Extraire background-color des td/th AVANT tout autre nettoyage ──
-        // Google Docs met les couleurs dans style="background-color:#rrggbb"
-        body.querySelectorAll('td, th').forEach(function(el) {
-          var style = el.getAttribute('style') || '';
-          var m = style.match(/background-color\s*:\s*([^;]+)/);
-          // Stocker dans data-bg pour le remettre apres nettoyage
-          if (m) { el.setAttribute('data-bg', m[1].trim()); }
-        });
-
-        // ── ETAPE 4 : Supprimer TOUS les styles inline et classes (clean slate) ──
-        body.querySelectorAll('[style]').forEach(function(el) { el.removeAttribute('style'); });
-        body.querySelectorAll('[class]').forEach(function(el) { el.removeAttribute('class'); });
-
-        // ── ETAPE 5 : Remettre background-color sur td/th depuis data-bg ──
-        body.querySelectorAll('[data-bg]').forEach(function(el) {
-          el.style.backgroundColor = el.getAttribute('data-bg');
-          el.removeAttribute('data-bg');
-        });
-
-        // ── ETAPE 6 : Supprimer attributs obsoletes ──
-        body.querySelectorAll('[color],[bgcolor],[align],[width],[height],[border],[cellpadding],[cellspacing]').forEach(function(el) {
-          ['color','bgcolor','align','width','height','border','cellpadding','cellspacing'].forEach(function(a) {
-            el.removeAttribute(a);
-          });
-        });
-
-        // ── ETAPE 7 : Aplatir les spans inutiles (Google Docs en genere des centaines) ──
-        body.querySelectorAll('span').forEach(function(el) {
-          if (!el.querySelector('a') && el.children.length === 0) {
-            el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
-          }
-        });
-
-        // ── ETAPE 8 : Supprimer le header Google Docs (tout avant le 1er H1) ──
-        var firstH1 = body.querySelector('h1');
-        if (firstH1) {
-          var node = firstH1.previousSibling;
-          while (node) {
-            var prev = node.previousSibling;
-            node.parentNode.removeChild(node);
-            node = prev;
-          }
-        }
-
-        // ── ETAPE 9 : Supprimer textes parasites Google Docs restants ──
-        // L'icone "i" + "Publie a l aide de Google Docs" est dans un <p> apres le h1
-        var NOISE = ['published using google docs','report abuse','learn more',
-                     'signaler un abus','en savoir plus'];
-        body.querySelectorAll('p, div, span, a').forEach(function(el) {
-          var t = el.textContent.trim().toLowerCase();
-          // Supprimer si texte de bruit exact
-          if (NOISE.some(function(n) { return t === n; }) ||
-              t.indexOf('updated automatically') === 0 ||
-              t.indexOf('mise') === 0 ||
-              /^onglet\s+\d+$/i.test(t)) {
-            el.remove();
-            return;
-          }
-          // Supprimer tout p/div qui contient une img ET du texte court (header Google Docs)
-          if ((el.tagName === 'P' || el.tagName === 'DIV') &&
-              el.querySelector('img') && t.length < 120) {
-            el.remove();
-          }
-        });
-        // Supprimer aussi les <p> qui ne contiennent que des liens "signaler/learn more"
-        body.querySelectorAll('p').forEach(function(el) {
-          var links = el.querySelectorAll('a');
-          var textOnly = el.textContent.trim().toLowerCase();
-          if (links.length > 0 && textOnly.length < 80 &&
-              (textOnly.indexOf('signaler') !== -1 || textOnly.indexOf('abuse') !== -1 ||
-               textOnly.indexOf('learn more') !== -1 || textOnly.indexOf('en savoir') !== -1 ||
-               textOnly.indexOf('publi') !== -1)) {
-            el.remove();
-          }
-        });
-
-        // ── ETAPE 10 : Supprimer elements vides ──
-        body.querySelectorAll('p, h1, h2, h3, h4').forEach(function(el) {
-          if (el.textContent.trim() === '') { el.remove(); }
-        });
-
         var ct = document.getElementById('g-ct');
-        if (!ct) { return; }  // securite si appele hors contexte
-        ct.innerHTML = body.innerHTML;
+        var ld = document.getElementById('g-ld');
+        if (!ct) return;
+        ct.innerHTML = cleanGdoc(html);
         x4proc(ct);
-        x4buildtoc(ct);
-        document.getElementById('g-ld').style.display = 'none';
+        x4toc(ct);
+        ld.style.display = 'none';
         ct.style.display = 'block';
         orig = ct.innerHTML;
-
         var n = new Date();
-        document.getElementById('g-ri').textContent =
-          'Sync ' + n.getHours() + ':' + ('0' + n.getMinutes()).slice(-2);
+        var ri = document.getElementById('hd-ri');
+        if (ri) ri.textContent = 'Sync ' + n.getHours() + ':' + ('0'+n.getMinutes()).slice(-2);
         x4spy();
       })
       .catch(function(e) {
-        document.getElementById('g-ld').innerHTML =
-          '<div style="text-align:center;padding:30px;max-width:440px">' +
-          '<p style="font-size:1rem;color:#f85149;margin-bottom:8px">Chargement impossible</p>' +
-          '<p style="font-size:.82rem;color:#8b949e;line-height:1.6;margin-bottom:12px">' + e.message + '</p>' +
-          '<a href="' + DOC + '" target="_blank" style="color:#f0a500;font-size:.82rem">Ouvrir directement dans Google Docs</a><br><br>' +
-          '<button onclick="x4load()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;' +
-          'padding:6px 14px;border-radius:5px;cursor:pointer;font-size:.82rem">Réessayer</button>' +
+        var ld = document.getElementById('g-ld');
+        if (!ld) return;
+        ld.innerHTML = '<div style="text-align:center;padding:30px;max-width:440px">'+
+          '<p style="color:#f85149;margin-bottom:8px">Chargement impossible</p>'+
+          '<p style="font-size:.82rem;color:#8b949e;margin-bottom:12px">'+e.message+'</p>'+
+          '<a href="'+DOC+'" target="_blank" style="color:#f0a500;font-size:.82rem">Ouvrir dans Google Docs</a><br><br>'+
+          '<button onclick="x4load()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:6px 14px;border-radius:5px;cursor:pointer">Réessayer</button>'+
           '</div>';
       });
   };
 
-  function x4proc(root) {
-    var c = {};
-    root.querySelectorAll('h1,h2,h3,h4').forEach(function(h) {
-      var s = x4slug(h.textContent.trim());
-      c[s] = (c[s] || 0) + 1;
-      h.id = c[s] > 1 ? s + '-' + c[s] : s;
-    });
-    root.querySelectorAll('a[href]').forEach(function(a) {
-      if (a.href.indexOf('#') !== 0) { a.target = '_blank'; a.rel = 'noopener'; }
+  /* ── TRAITEMENT POST-INSERTION ── */
+  function x4proc(ct) {
+    var slugs = {};
+    ct.querySelectorAll('h1,h2,h3,h4').forEach(function(el) {
+      var base = el.textContent.trim().toLowerCase().replace(/[^a-z0-9\u00e0-\u00ff]+/g,'-').replace(/^-|-$/g,'');
+      slugs[base] = (slugs[base]||0) + 1;
+      el.id = slugs[base] > 1 ? base+'-'+slugs[base] : base;
     });
   }
 
-  function x4slug(t) {
-    return t.toLowerCase()
-      .replace(/[\u00e0\u00e1\u00e2\u00e3]/g, 'a')
-      .replace(/[\u00e8\u00e9\u00ea\u00eb]/g, 'e')
-      .replace(/[\u00ec\u00ed\u00ee]/g, 'i')
-      .replace(/[\u00f2\u00f3\u00f4\u00f5]/g, 'o')
-      .replace(/[\u00f9\u00fa\u00fb\u00fc]/g, 'u')
-      .replace(/\u00e7/g, 'c')
-      .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').slice(0, 60);
-  }
-
-  function x4buildtoc(root) {
+  /* ── TABLE DES MATIÈRES ── */
+  function x4toc(ct) {
     var toc = document.getElementById('g-toc');
+    if (!toc) return;
     toc.innerHTML = '';
-    heads = [];
-    root.querySelectorAll('h1,h2,h3').forEach(function(h) {
-      var txt = h.textContent.trim();
-      if (!txt || txt.length < 2) { return; }
-      heads.push({ id: h.id, el: h });
+    ct.querySelectorAll('h1,h2,h3,h4').forEach(function(el) {
       var a = document.createElement('a');
-      a.className = 'ti h' + h.tagName[1];
-      a.textContent = txt;
-      a.title = txt;
-      a.href = '#' + h.id;
+      a.href = '#' + el.id;
+      a.textContent = el.textContent.trim();
+      var cls = el.tagName==='H1'?'ti':el.tagName==='H3'?'h3':el.tagName==='H4'?'h4':'';
+      if (cls) a.className = cls;
       a.onclick = function(e) {
         e.preventDefault();
-        var ms = document.getElementById('g-ms');
-        ms.scrollTo({ top: h.offsetTop - 16, behavior: 'smooth' });
-        if (window.innerWidth <= 700) { x4tog(); }
+        var ms = document.getElementById('ms');
+        var target = document.getElementById(el.id);
+        if (ms && target) ms.scrollTo({ top: target.offsetTop - 10, behavior: 'smooth' });
+        if (window.innerWidth <= 700) { var sb = document.getElementById('sb'); if(sb){sb.classList.add('closed');sbOpen=false;} }
       };
       toc.appendChild(a);
     });
   }
 
+  /* ── SCROLL SPY ── */
   function x4spy() {
-    var ms = document.getElementById('g-ms');
-    ms.addEventListener('scroll', function() {
+    var ms = document.getElementById('ms');
+    if (!ms) return;
+    ms.onscroll = function() {
+      /* Back to top */
       var bt = document.getElementById('g-bt');
-      if (ms.scrollTop > 350) { bt.classList.add('vis'); } else { bt.classList.remove('vis'); }
-      var cur = heads.length ? heads[0].id : '';
-      var top = ms.scrollTop + 80;
-      for (var i = 0; i < heads.length; i++) {
-        if (heads[i].el.offsetTop <= top) { cur = heads[i].id; }
-      }
-      if (cur !== aid) {
-        aid = cur;
-        document.querySelectorAll('.ti').forEach(function(a) {
-          var active = a.getAttribute('href') === '#' + cur;
-          if (active) { a.classList.add('act'); a.scrollIntoView({ block: 'nearest' }); }
-          else { a.classList.remove('act'); }
-        });
-      }
-    }, { passive: true });
+      if (bt) bt.style.display = ms.scrollTop > 300 ? 'flex' : 'none';
+      /* Active TOC item */
+      if (spyTid) clearTimeout(spyTid);
+      spyTid = setTimeout(function() {
+        var ct = document.getElementById('g-ct');
+        var toc = document.getElementById('g-toc');
+        if (!ct || !toc) return;
+        var heads = ct.querySelectorAll('h1,h2,h3');
+        var active = null;
+        heads.forEach(function(h) { if (h.offsetTop - 20 <= ms.scrollTop) active = h; });
+        toc.querySelectorAll('a').forEach(function(a) { a.classList.remove('act'); });
+        if (active) {
+          var link = toc.querySelector('a[href="#'+active.id+'"]');
+          if (link) { link.classList.add('act'); link.scrollIntoView({block:'nearest'}); }
+        }
+      }, 80);
+    };
   }
 
+  /* ── RECHERCHE ── */
   window.x4search = function(q) {
     var ct = document.getElementById('g-ct');
-    if (!ct) { return; }
+    if (!ct) return;
     ct.innerHTML = orig;
     x4proc(ct);
     ml = []; mi = 0;
     var sc = document.getElementById('g-sc');
-    var bp = document.getElementById('g-bp');
-    var bn = document.getElementById('g-bn');
-    if (q.trim().length < 2) {
-      sc.textContent = '';
-      bp.style.display = 'none';
-      bn.style.display = 'none';
-      return;
-    }
-    x4hl(ct, q.trim());
-    ml = Array.from(ct.querySelectorAll('mark'));
-    var n = ml.length;
-    sc.textContent = n ? (n + (n > 1 ? ' résultats' : ' résultat')) : 'Aucun';
-    bp.style.display = bn.style.display = n ? 'inline-block' : 'none';
-    if (n) { mi = 0; x4hlc(); }
+    if (!q.trim()) { if(sc) sc.textContent=''; return; }
+    var walker = document.createTreeWalker(ct, NodeFilter.SHOW_TEXT);
+    var textNodes = [];
+    var node;
+    while ((node = walker.nextNode())) textNodes.push(node);
+    var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi');
+    textNodes.forEach(function(tn) {
+      if (!re.test(tn.textContent)) return;
+      re.lastIndex = 0;
+      var frag = document.createDocumentFragment();
+      var last = 0, m;
+      while ((m = re.exec(tn.textContent)) !== null) {
+        frag.appendChild(document.createTextNode(tn.textContent.slice(last, m.index)));
+        var mk = document.createElement('mark');
+        mk.textContent = m[0];
+        frag.appendChild(mk);
+        ml.push(mk);
+        last = m.index + m[0].length;
+      }
+      frag.appendChild(document.createTextNode(tn.textContent.slice(last)));
+      tn.parentNode.replaceChild(frag, tn);
+      re.lastIndex = 0;
+    });
+    if (ml.length) { ml[0].className = 'cur'; x4scrollTo(ml[0]); }
+    if (sc) sc.textContent = ml.length ? '1/'+ml.length : '0';
   };
 
-  function x4hl(node, q) {
-    var ql = q.toLowerCase();
-    if (node.nodeType === 3) {
-      var idx = node.textContent.toLowerCase().indexOf(ql);
-      if (idx === -1) { return; }
-      var before = document.createTextNode(node.textContent.slice(0, idx));
-      var mark = document.createElement('mark');
-      mark.textContent = node.textContent.slice(idx, idx + q.length);
-      var after = document.createTextNode(node.textContent.slice(idx + q.length));
-      var par = node.parentNode;
-      par.replaceChild(after, node);
-      par.insertBefore(mark, after);
-      par.insertBefore(before, mark);
-      x4hl(after, q);
-    } else if (node.nodeType === 1 &&
-               node.tagName !== 'SCRIPT' &&
-               node.tagName !== 'STYLE' &&
-               node.tagName !== 'MARK') {
-      Array.from(node.childNodes).forEach(function(child) { x4hl(child, q); });
-    }
-  }
-
-  function x4hlc() {
-    document.querySelectorAll('mark.cur').forEach(function(m) { m.classList.remove('cur'); });
-    if (ml[mi]) {
-      ml[mi].classList.add('cur');
-      ml[mi].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
-
-  window.x4nav = function(d) {
-    if (!ml.length) { return; }
-    mi = (mi + d + ml.length) % ml.length;
-    x4hlc();
-    document.getElementById('g-sc').textContent = (mi + 1) + '/' + ml.length;
+  window.x4nav = function(dir) {
+    if (!ml.length) return;
+    ml[mi].className = '';
+    mi = (mi + dir + ml.length) % ml.length;
+    ml[mi].className = 'cur';
+    x4scrollTo(ml[mi]);
+    var sc = document.getElementById('g-sc');
+    if (sc) sc.textContent = (mi+1)+'/'+ml.length;
   };
 
   window.x4snav = function(e) {
     if (e.key === 'Enter') { x4nav(e.shiftKey ? -1 : 1); }
     if (e.key === 'Escape') {
-      var _s = document.getElementById('g-search');
-      if (_s) { _s.value = ''; }
+      var gs = document.getElementById('g-search');
+      if (gs) gs.value = '';
       x4search('');
     }
   };
 
-  window.x4tog = function() {
-    sbOpen = !sbOpen;
-    var sb = document.getElementById('g-sb');
-    if (sbOpen) { sb.classList.remove('col'); } else { sb.classList.add('col'); }
-  };
+  function x4scrollTo(el) {
+    var ms = document.getElementById('ms');
+    if (ms && el) ms.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+  }
 
   window.x4top = function() {
-    document.getElementById('g-ms').scrollTo({ top: 0, behavior: 'smooth' });
+    var ms = document.getElementById('ms');
+    if (ms) ms.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  window.x4sb = function() {
+    var sb = document.getElementById('sb');
+    if (!sb) return;
+    sbOpen = !sbOpen;
+    sb.classList.toggle('closed', !sbOpen);
+  };
+
+  /* ── AUTO-REFRESH ── */
   setInterval(function() {
-    var s = document.getElementById('g-search');
-    if (s && !s.value.trim()) { x4load(); }
+    var gs = document.getElementById('g-search');
+    if (gs && !gs.value.trim()) x4load();
   }, 300000);
 
+  /* ── LANCEMENT ── */
   x4load();
 })();
 </script>
