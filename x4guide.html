@@ -131,7 +131,7 @@ main {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-#g-ct { display: none; max-width: 820px; margin: 0 auto; padding: 34px 42px 70px; }
+#g-ct { display: none; max-width: 1100px; margin: 0 auto; padding: 34px 42px 70px; }
 
 #g-ct h1 {
   font-size: 1.6rem; font-weight: 800; color: var(--accent);
@@ -254,31 +254,58 @@ mark.cur { background: var(--accent); color: #000; }
 <script>
 (function() {
   var DOC = 'https://docs.google.com/document/d/e/2PACX-1vS0RCKFftmhFPhR4fDQg_mADCKelLpdVMIVJ7qVrgX9XtV55fYE3kKsLmE0vIvhOZ7qs5TMxntG42dv/pub';
-  var PROXY = 'https://corsproxy.io/?url=';
+  var PROXY = 'https://api.allorigins.win/get?url=';
   var sbOpen = true, ml = [], mi = 0, orig = '', heads = [], aid = '';
 
   window.x4load = function() {
     fetch(PROXY + encodeURIComponent(DOC))
       .then(function(r) {
         if (!r.ok) { throw new Error('HTTP ' + r.status); }
-        return r.text();
+        return r.json();
       })
       .then(function(data) {
         var parser = new DOMParser();
-        var gdoc = parser.parseFromString(data, 'text/html');
+        var gdoc = parser.parseFromString(data.contents, 'text/html');
         var body = gdoc.querySelector('body');
         if (!body) { throw new Error('Corps vide'); }
 
+        // Supprimer les éléments de bruit Google Docs
         body.querySelectorAll('a[href*="drive.google.com"], a[href*="support.google.com"]').forEach(function(el) {
           var p = el.closest('p');
           if (p) { p.remove(); }
         });
-        body.querySelectorAll('p, div').forEach(function(el) {
+        body.querySelectorAll('p, div, span').forEach(function(el) {
           var t = el.textContent.trim();
           if (t === 'Published using Google Docs' || t === 'Report abuse' ||
               t === 'Learn more' || t.indexOf('Updated automatically') === 0) {
             el.remove();
           }
+        });
+
+        // Supprimer les titres d'onglets Google Docs (ex: "Onglet 1")
+        body.querySelectorAll('h1, h2, h3, h4').forEach(function(el) {
+          var t = el.textContent.trim();
+          if (/^onglet\s+\d+$/i.test(t) || /^sheet\s+\d+$/i.test(t)) {
+            el.remove();
+          }
+        });
+
+        // Supprimer tous les styles inline qui viennent de Google Docs
+        body.querySelectorAll('[style]').forEach(function(el) {
+          el.removeAttribute('style');
+        });
+
+        // Supprimer les spans inutiles (Google Docs en génère des tonnes)
+        body.querySelectorAll('span').forEach(function(el) {
+          if (!el.querySelector('a') && el.children.length === 0) {
+            var txt = document.createTextNode(el.textContent);
+            el.parentNode.replaceChild(txt, el);
+          }
+        });
+
+        // Supprimer les éléments vides
+        body.querySelectorAll('p, div, h1, h2, h3, h4').forEach(function(el) {
+          if (el.textContent.trim() === '') { el.remove(); }
         });
 
         var ct = document.getElementById('g-ct');
