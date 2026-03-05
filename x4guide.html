@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>X4 Foundations — Guide Ultime</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #0d1117; }
+
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
+  --accent:#f0a500; --accent2:#e8751a;
+  --text:#e6edf3; --muted:#8b949e; --border:#30363d;
+  --sw:280px; --hh:52px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* HEADER */
+.hdr {
+  height: var(--hh);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.hdr h1 {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.sub { font-size: .68rem; color: var(--muted); white-space: nowrap; }
+.tbtn {
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; padding: 4px; display: flex; align-items: center; flex-shrink: 0;
+}
+.tbtn:hover { color: var(--text); }
+
+.sw { margin-left: auto; position: relative; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.si { position: absolute; left: 8px; opacity: .4; pointer-events: none; }
+#g-search {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); padding: 5px 9px 5px 28px; font-size: .8rem;
+  width: 195px; outline: none; font-family: inherit;
+}
+#g-search:focus { border-color: var(--accent); }
+#g-search::placeholder { color: var(--muted); }
+#g-sc { font-size: .68rem; color: var(--muted); white-space: nowrap; min-width: 50px; }
+.nb {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 4px;
+  color: var(--text); padding: 3px 6px; cursor: pointer; font-size: .75rem; display: none;
+}
+.nb:hover { border-color: var(--accent); }
+#g-ri { font-size: .65rem; color: var(--muted); }
+
+/* LAYOUT */
+.lay {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* SIDEBAR */
+aside {
+  width: var(--sw);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width .22s ease, opacity .22s ease;
+}
+aside.col { width: 0; opacity: 0; }
+
+.sh {
+  padding: 10px 14px 7px;
+  font-size: .65rem; font-weight: 700; letter-spacing: 1.1px;
+  color: var(--muted); text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#g-toc {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0 20px;
+}
+
+.ti {
+  display: block; padding: 4px 14px; font-size: .78rem; color: var(--muted);
+  text-decoration: none; cursor: pointer; border-left: 2px solid transparent;
+  line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color .1s, background .1s, border-color .1s;
+}
+.ti:hover { color: var(--text); background: var(--bg3); }
+.ti.act { color: var(--accent); border-left-color: var(--accent); background: rgba(240,165,0,.07); }
+.ti.h1 { font-weight: 700; font-size: .81rem; color: #c9d1d9; padding-top: 8px; }
+.ti.h2 { padding-left: 26px; }
+.ti.h3 { padding-left: 40px; font-size: .73rem; }
+
+/* MAIN */
+main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+  background: var(--bg);
+}
+
+#g-ld {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 12px; color: var(--muted);
+}
+.sp {
+  width: 32px; height: 32px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#g-ct { display: none; max-width: 820px; margin: 0 auto; padding: 34px 42px 70px; }
+
+#g-ct h1 {
+  font-size: 1.6rem; font-weight: 800; color: var(--accent);
+  margin: 1.9rem 0 .7rem; padding: 0 0 .4rem;
+  border-bottom: 2px solid var(--border);
+  line-height: 1.2;
+}
+#g-ct h1:first-child { margin-top: 0; }
+#g-ct h2 {
+  font-size: 1.18rem; font-weight: 700; color: #c9d1d9;
+  margin: 1.8rem 0 .5rem; padding: 0 0 0 10px;
+  border-left: 3px solid var(--accent);
+  line-height: 1.3;
+}
+#g-ct h3 {
+  font-size: 1rem; font-weight: 600; color: var(--accent2);
+  margin: 1.3rem 0 .4rem;
+}
+#g-ct h4 {
+  font-size: .92rem; font-weight: 600; color: #c9d1d9;
+  margin: 1.1rem 0 .35rem;
+}
+#g-ct p { line-height: 1.75; margin-bottom: .7rem; color: #c9d1d9; font-size: .9rem; }
+#g-ct ul, #g-ct ol { margin: .4rem 0 .7rem 1.3rem; color: #c9d1d9; font-size: .9rem; }
+#g-ct li { margin-bottom: .25rem; line-height: 1.6; }
+#g-ct strong { color: var(--text); }
+#g-ct a { color: var(--accent); text-decoration: none; }
+#g-ct a:hover { text-decoration: underline; }
+#g-ct hr { border: none; border-top: 1px solid var(--border); margin: 1.7rem 0; }
+
+#g-ct table {
+  width: 100%; border-collapse: collapse;
+  margin: .8rem 0 1.3rem; font-size: .82rem;
+  border-radius: 6px; overflow: hidden;
+}
+#g-ct th {
+  background: var(--bg3); color: var(--accent);
+  padding: 7px 10px; text-align: left;
+  font-weight: 700; border-bottom: 2px solid var(--accent);
+}
+#g-ct td {
+  padding: 6px 10px; border-bottom: 1px solid var(--border);
+  color: #c9d1d9; vertical-align: top;
+}
+#g-ct tr:last-child td { border-bottom: none; }
+#g-ct tr:nth-child(even) td { background: rgba(255,255,255,.022); }
+#g-ct tr:hover td { background: rgba(240,165,0,.04); }
+
+mark { background: rgba(240,165,0,.28); color: var(--text); border-radius: 2px; padding: 0 1px; }
+mark.cur { background: var(--accent); color: #000; }
+
+#g-toc::-webkit-scrollbar, main::-webkit-scrollbar { width: 5px; }
+#g-toc::-webkit-scrollbar-track, main::-webkit-scrollbar-track { background: transparent; }
+#g-toc::-webkit-scrollbar-thumb, main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+#g-bt {
+  position: fixed; bottom: 18px; right: 18px;
+  background: var(--accent); color: #000; border: none; border-radius: 50%;
+  width: 34px; height: 34px; font-size: 1rem; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,.5); z-index: 50; font-weight: 700;
+}
+#g-bt.vis { display: flex; }
+
+@media (max-width: 700px) {
+  aside {
+    position: fixed; top: var(--hh); left: 0;
+    height: calc(100% - var(--hh)); z-index: 20;
+    transition: transform .22s ease, opacity .22s ease;
+  }
+  aside.col { transform: translateX(-100%); width: var(--sw); opacity: 1; }
+  #g-ct { padding: 18px 14px 50px; }
+  #g-search { width: 130px; }
+  .sub, #g-ri { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <button class="tbtn" onclick="x4tog()" title="Sommaire">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+  <h1>⚡ X4 Foundations — Guide Ultime</h1>
+  <span class="sub">v8.0 Diplomacy · Yoh</span>
+  <span id="g-ri"></span>
+  <div class="sw">
+    <svg class="si" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="g-search" placeholder="Rechercher…"
+           oninput="x4search(this.value)" onkeydown="x4snav(event)"/>
+    <span id="g-sc"></span>
+    <button class="nb" id="g-bp" onclick="x4nav(-1)">↑</button>
+    <button class="nb" id="g-bn" onclick="x4nav(1)">↓</button>
+  </div>
+</div>
+
+<div class="lay">
+  <aside id="g-sb">
+    <div class="sh">Sommaire</div>
+    <nav id="g-toc"></nav>
+  </aside>
+  <main id="g-ms">
+    <div id="g-ld">
+      <div class="sp"></div>
+      <span style="font-size:.85rem">Chargement depuis Google Docs…</span>
+    </div>
+    <div id="g-ct"></div>
+  </main>
+</div>
+
+<button id="g-bt" onclick="x4top()">↑</button>
+
+<script>
+(function() {
+  var DOC = 'https://docs.google.com/document/d/e/2PACX-1vS0RCKFftmhFPhR4fDQg_mADCKelLpdVMIVJ7qVrgX9XtV55fYE3kKsLmE0vIvhOZ7qs5TMxntG42dv/pub';
+  var PROXY = 'https://api.allorigins.win/get?url=';
+  var sbOpen = true, ml = [], mi = 0, orig = '', heads = [], aid = '';
+
+  window.x4load = function() {
+    fetch(PROXY + encodeURIComponent(DOC))
+      .then(function(r) {
+        if (!r.ok) { throw new Error('HTTP ' + r.status); }
+        return r.json();
+      })
+      .then(function(data) {
+        var parser = new DOMParser();
+        var gdoc = parser.parseFromString(data.contents, 'text/html');
+        var body = gdoc.querySelector('body');
+        if (!body) { throw new Error('Corps vide'); }
+
+        body.querySelectorAll('a[href*="drive.google.com"], a[href*="support.google.com"]').forEach(function(el) {
+          var p = el.closest('p');
+          if (p) { p.remove(); }
+        });
+        body.querySelectorAll('p, div').forEach(function(el) {
+          var t = el.textContent.trim();
+          if (t === 'Published using Google Docs' || t === 'Report abuse' ||
+              t === 'Learn more' || t.indexOf('Updated automatically') === 0) {
+            el.remove();
+          }
+        });
+
+        var ct = document.getElementById('g-ct');
+        ct.innerHTML = body.innerHTML;
+        x4proc(ct);
+        x4buildtoc(ct);
+        document.getElementById('g-ld').style.display = 'none';
+        ct.style.display = 'block';
+        orig = ct.innerHTML;
+
+        var n = new Date();
+        document.getElementById('g-ri').textContent =
+          'Sync ' + n.getHours() + ':' + ('0' + n.getMinutes()).slice(-2);
+        x4spy();
+      })
+      .catch(function(e) {
+        document.getElementById('g-ld').innerHTML =
+          '<div style="text-align:center;padding:30px;max-width:440px">' +
+          '<p style="font-size:1rem;color:#f85149;margin-bottom:8px">Chargement impossible</p>' +
+          '<p style="font-size:.82rem;color:#8b949e;line-height:1.6;margin-bottom:12px">' + e.message + '</p>' +
+          '<a href="' + DOC + '" target="_blank" style="color:#f0a500;font-size:.82rem">Ouvrir directement dans Google Docs</a><br><br>' +
+          '<button onclick="x4load()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;' +
+          'padding:6px 14px;border-radius:5px;cursor:pointer;font-size:.82rem">Réessayer</button>' +
+          '</div>';
+      });
+  };
+
+  function x4proc(root) {
+    var c = {};
+    root.querySelectorAll('h1,h2,h3,h4').forEach(function(h) {
+      var s = x4slug(h.textContent.trim());
+      c[s] = (c[s] || 0) + 1;
+      h.id = c[s] > 1 ? s + '-' + c[s] : s;
+    });
+    root.querySelectorAll('a[href]').forEach(function(a) {
+      if (a.href.indexOf('#') !== 0) { a.target = '_blank'; a.rel = 'noopener'; }
+    });
+  }
+
+  function x4slug(t) {
+    return t.toLowerCase()
+      .replace(/[\u00e0\u00e1\u00e2\u00e3]/g, 'a')
+      .replace(/[\u00e8\u00e9\u00ea\u00eb]/g, 'e')
+      .replace(/[\u00ec\u00ed\u00ee]/g, 'i')
+      .replace(/[\u00f2\u00f3\u00f4\u00f5]/g, 'o')
+      .replace(/[\u00f9\u00fa\u00fb\u00fc]/g, 'u')
+      .replace(/\u00e7/g, 'c')
+      .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').slice(0, 60);
+  }
+
+  function x4buildtoc(root) {
+    var toc = document.getElementById('g-toc');
+    toc.innerHTML = '';
+    heads = [];
+    root.querySelectorAll('h1,h2,h3').forEach(function(h) {
+      var txt = h.textContent.trim();
+      if (!txt || txt.length < 2) { return; }
+      heads.push({ id: h.id, el: h });
+      var a = document.createElement('a');
+      a.className = 'ti h' + h.tagName[1];
+      a.textContent = txt;
+      a.title = txt;
+      a.href = '#' + h.id;
+      a.onclick = function(e) {
+        e.preventDefault();
+        var ms = document.getElementById('g-ms');
+        ms.scrollTo({ top: h.offsetTop - 16, behavior: 'smooth' });
+        if (window.innerWidth <= 700) { x4tog(); }
+      };
+      toc.appendChild(a);
+    });
+  }
+
+  function x4spy() {
+    var ms = document.getElementById('g-ms');
+    ms.addEventListener('scroll', function() {
+      var bt = document.getElementById('g-bt');
+      if (ms.scrollTop > 350) { bt.classList.add('vis'); } else { bt.classList.remove('vis'); }
+      var cur = heads.length ? heads[0].id : '';
+      var top = ms.scrollTop + 80;
+      for (var i = 0; i < heads.length; i++) {
+        if (heads[i].el.offsetTop <= top) { cur = heads[i].id; }
+      }
+      if (cur !== aid) {
+        aid = cur;
+        document.querySelectorAll('.ti').forEach(function(a) {
+          var active = a.getAttribute('href') === '#' + cur;
+          if (active) { a.classList.add('act'); a.scrollIntoView({ block: 'nearest' }); }
+          else { a.classList.remove('act'); }
+        });
+      }
+    }, { passive: true });
+  }
+
+  window.x4search = function(q) {
+    var ct = document.getElementById('g-ct');
+    ct.innerHTML = orig;
+    x4proc(ct);
+    ml = []; mi = 0;
+    var sc = document.getElementById('g-sc');
+    var bp = document.getElementById('g-bp');
+    var bn = document.getElementById('g-bn');
+    if (q.trim().length < 2) {
+      sc.textContent = '';
+      bp.style.display = 'none';
+      bn.style.display = 'none';
+      return;
+    }
+    x4hl(ct, q.trim());
+    ml = Array.from(ct.querySelectorAll('mark'));
+    var n = ml.length;
+    sc.textContent = n ? (n + (n > 1 ? ' résultats' : ' résultat')) : 'Aucun';
+    bp.style.display = bn.style.display = n ? 'inline-block' : 'none';
+    if (n) { mi = 0; x4hlc(); }
+  };
+
+  function x4hl(node, q) {
+    var ql = q.toLowerCase();
+    if (node.nodeType === 3) {
+      var idx = node.textContent.toLowerCase().indexOf(ql);
+      if (idx === -1) { return; }
+      var before = document.createTextNode(node.textContent.slice(0, idx));
+      var mark = document.createElement('mark');
+      mark.textContent = node.textContent.slice(idx, idx + q.length);
+      var after = document.createTextNode(node.textContent.slice(idx + q.length));
+      var par = node.parentNode;
+      par.replaceChild(after, node);
+      par.insertBefore(mark, after);
+      par.insertBefore(before, mark);
+      x4hl(after, q);
+    } else if (node.nodeType === 1 &&
+               node.tagName !== 'SCRIPT' &&
+               node.tagName !== 'STYLE' &&
+               node.tagName !== 'MARK') {
+      Array.from(node.childNodes).forEach(function(child) { x4hl(child, q); });
+    }
+  }
+
+  function x4hlc() {
+    document.querySelectorAll('mark.cur').forEach(function(m) { m.classList.remove('cur'); });
+    if (ml[mi]) {
+      ml[mi].classList.add('cur');
+      ml[mi].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  window.x4nav = function(d) {
+    if (!ml.length) { return; }
+    mi = (mi + d + ml.length) % ml.length;
+    x4hlc();
+    document.getElementById('g-sc').textContent = (mi + 1) + '/' + ml.length;
+  };
+
+  window.x4snav = function(e) {
+    if (e.key === 'Enter') { x4nav(e.shiftKey ? -1 : 1); }
+    if (e.key === 'Escape') {
+      document.getElementById('g-search').value = '';
+      x4search('');
+    }
+  };
+
+  window.x4tog = function() {
+    sbOpen = !sbOpen;
+    var sb = document.getElementById('g-sb');
+    if (sbOpen) { sb.classList.remove('col'); } else { sb.classList.add('col'); }
+  };
+
+  window.x4top = function() {
+    document.getElementById('g-ms').scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  setInterval(function() {
+    if (!document.getElementById('g-search').value.trim()) { x4load(); }
+  }, 300000);
+
+  x4load();
+})();
+</script>
+</body>
+</html>
