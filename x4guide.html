@@ -245,8 +245,10 @@ mark.cur{background:var(--accent);color:#000}
           '<p style="color:#f85149;margin-bottom:8px">Chargement impossible</p>'+
           '<p style="font-size:.82rem;color:#8b949e;margin-bottom:12px">'+e.message+'</p>'+
           '<a href="'+DOC+'" target="_blank" style="color:#f0a500;font-size:.82rem">Ouvrir dans Google Docs</a><br><br>'+
-          '<button onclick="x4load()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:6px 14px;border-radius:5px;cursor:pointer">Réessayer</button>'+
+          '<button id="g-retry" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:6px 14px;border-radius:5px;cursor:pointer">Réessayer</button>'+
           '</div>';
+        var rb = document.getElementById('g-retry');
+        if (rb) rb.addEventListener('click', x4load);
       });
   };
 
@@ -392,8 +394,7 @@ mark.cur{background:var(--accent);color:#000}
   document.getElementById('g-bn').addEventListener('click', function(){ x4nav(1); });
   document.getElementById('g-bt').addEventListener('click', x4top);
   document.getElementById('hd-tog').addEventListener('click', x4sb);
-  /* x4load exposé globalement uniquement pour le bouton "Réessayer" dans le message d'erreur */
-  window.x4load = x4load;
+
 
   /* ── LANCEMENT ── */
   x4load();
