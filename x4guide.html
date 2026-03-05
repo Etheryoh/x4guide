@@ -141,42 +141,15 @@ mark.cur{background:var(--accent);color:#000}
     var body = doc.body;
     if (!body) throw new Error('Corps vide');
 
-    /* 1. Extraire les background-color depuis les classes CSS Google Docs
-          Google Docs pub génère : <style>.c5{background-color:#ea9999;...}</style>
-          puis <td class="c5"> - sans rien dans style=""
-          Il faut lire le CSS AVANT de le supprimer */
-    var bgByClass = {};
-    doc.querySelectorAll('style').forEach(function(styleEl) {
-      var css = styleEl.textContent;
-      /* Chercher patterns : .cXX{...background-color:#rrggbb...} */
-      var re = /\.([a-zA-Z0-9_-]+)\s*\{([^}]*)\}/g;
-      var m;
-      while ((m = re.exec(css)) !== null) {
-        var cls = m[1];
-        var rules = m[2];
-        var bgMatch = rules.match(/background-color\s*:\s*([^;]+)/i);
-        if (bgMatch) bgByClass[cls] = bgMatch[1].trim();
-      }
-    });
+    /* 1. Supprimer <style> et <script> Google Docs */
+    body.querySelectorAll('style,script').forEach(function(el){ el.remove(); });
 
-    /* Appliquer les background-color trouvés en inline sur td/th */
+    /* 2. Extraire background-color des td/th AVANT tout nettoyage */
     body.querySelectorAll('td,th').forEach(function(el) {
-      /* D'abord chercher dans style="" inline */
       var s = el.getAttribute('style') || '';
       var m = s.match(/background-color\s*:\s*([^;]+)/i);
-      if (m) { el.setAttribute('data-bg', m[1].trim()); return; }
-      /* Sinon chercher via les classes CSS */
-      var classes = (el.getAttribute('class') || '').split(/\s+/);
-      for (var i = 0; i < classes.length; i++) {
-        if (bgByClass[classes[i]]) {
-          el.setAttribute('data-bg', bgByClass[classes[i]]);
-          break;
-        }
-      }
+      if (m) el.setAttribute('data-bg', m[1].trim());
     });
-
-    /* Supprimer <style> et <script> Google Docs */
-    body.querySelectorAll('style,script').forEach(function(el){ el.remove(); });
 
     /* 3. Supprimer TOUS les styles inline et classes (clean slate) */
     body.querySelectorAll('[style]').forEach(function(el){ el.removeAttribute('style'); });
