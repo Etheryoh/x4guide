@@ -131,7 +131,7 @@ main {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-#g-ct { display: none; max-width: none; margin: 0; padding: 28px 36px 70px; }
+#g-ct { display: none; width: 100%; padding: 28px 36px 70px; }
 
 #g-ct h1 {
   font-size: 1.6rem; font-weight: 800; color: var(--accent);
@@ -206,6 +206,33 @@ mark.cur { background: var(--accent); color: #000; }
   #g-ct { padding: 18px 14px 50px; }
   #g-search { width: 130px; }
   .sub, #g-ri { display: none; }
+}
+
+/* FORCER NOS COULEURS SUR TOUT LE CONTENU GOOGLE DOCS */
+/* Google Docs genere des couleurs, backgrounds, fonts inline - on les ecrase tous */
+#g-ct * {
+  background: transparent !important;
+  color: #c9d1d9 !important;
+  font-family: 'Segoe UI', system-ui, sans-serif !important;
+  border-color: #30363d !important;
+  max-width: 100% !important;
+}
+#g-ct h1, #g-ct h1 * { color: #f0a500 !important; font-size: 1.6rem !important; font-weight: 800 !important; }
+#g-ct h2, #g-ct h2 * { color: #c9d1d9 !important; font-size: 1.18rem !important; font-weight: 700 !important; }
+#g-ct h3, #g-ct h3 * { color: #e8751a !important; font-size: 1rem !important; font-weight: 600 !important; }
+#g-ct h4, #g-ct h4 * { color: #c9d1d9 !important; font-size: .92rem !important; font-weight: 600 !important; }
+#g-ct a, #g-ct a * { color: #f0a500 !important; }
+#g-ct strong, #g-ct b, #g-ct strong *, #g-ct b * { color: #e6edf3 !important; }
+#g-ct table, #g-ct td, #g-ct th, #g-ct tr { border-color: #30363d !important; }
+#g-ct th, #g-ct th * { color: #f0a500 !important; background: #21262d !important; }
+/* Supprimer les "pages" Google Docs */
+#g-ct .doc-content, #g-ct [class*="page"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 </style>
 </head>
@@ -340,6 +367,24 @@ mark.cur { background: var(--accent); color: #000; }
         // Supprimer les éléments vides
         body.querySelectorAll('p, div, h1, h2, h3, h4').forEach(function(el) {
           if (el.textContent.trim() === '') { el.remove(); }
+        });
+
+        // Supprimer les blocs <style> injectes par Google Docs
+        body.querySelectorAll('style').forEach(function(el) { el.remove(); });
+
+        // Supprimer les attributs class de Google Docs (ils portent des styles parasites)
+        body.querySelectorAll('[class]').forEach(function(el) {
+          // Garder seulement nos propres classes (ti, act, h1, etc.)
+          el.removeAttribute('class');
+        });
+
+        // Supprimer les attributs de couleur et taille directs
+        body.querySelectorAll('[color], [bgcolor], [width], [height], [align]').forEach(function(el) {
+          el.removeAttribute('color');
+          el.removeAttribute('bgcolor');
+          el.removeAttribute('width');
+          el.removeAttribute('height');
+          el.removeAttribute('align');
         });
 
         var ct = document.getElementById('g-ct');
